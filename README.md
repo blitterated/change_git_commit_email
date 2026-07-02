@@ -32,7 +32,7 @@ uv tool install git-filter-repo
 
 ### Create a directory to work in and jump into it
 
-This directory will be used to clone a repository into as well as to hold the `mailmap` file we'll use to remap the user and email address.
+This directory will hold a clone of the repository and a `mailmap` file for remapping the user's name and email address.
 
 ```sh
 mkdir ~/fix-emails && cd $_
@@ -94,7 +94,9 @@ or `tig` if you've got it installed
 tig
 ```
 
-### Change the commiter name and email for this repo
+### Update the committer name and email for your repo
+
+...so you don't run into the same problem again ;)
 
 ```sh
 git config user.name "blitterated"
