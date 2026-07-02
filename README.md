@@ -16,16 +16,16 @@ Here we'll take a look at how to replace commits with the wrong name and email a
 
 ## Tools
 
-### Install pipx with brew
+### Install uv with brew
 
 ```sh
-brew install pipx
+brew install uv
 ```
 
-### Install git-filter-repo with pipx
+### Install git-filter-repo with uv
 
 ```sh
-pipx install git-filter-repo
+uv tool install git-filter-repo
 ```
 
 ## Operation
