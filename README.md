@@ -1,13 +1,5 @@
 # Replacing Committer Name and Email on Commits
 
-__NOTE:__ This README currently describes the manual process of installing `git-filter-repo`, configuration, and running it to change committers and their emails.
-
-The point of this repo is to create a container for making this less of a hassle.
-
-<br/><br/><hr/><br/><br/>
-
-# Original Doc
-
 ## Scenario
 
 Have you ever made a series of commits and forgot to change git's local config for your name and email?
