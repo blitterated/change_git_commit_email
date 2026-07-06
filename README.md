@@ -67,7 +67,7 @@ EOF
 git clone git@github.com:blitterated/some-repo.git
 ```
 
-Your directory structure should look something like this:
+At this point, your directory structure should look something like this:
 
 ```text
 .
@@ -76,13 +76,6 @@ Your directory structure should look something like this:
 │   ├── some-script.sh
 │   └── README.md
 └── mailmap
-```
-
-
-### Pull down a fresh clone of your repo
-
-```sh
-git clone git@github.com:blitterated/some-repo.git
 ```
 
 
@@ -192,7 +185,7 @@ git config user.email "blitterated@protonmail.com"
 
 ## Push
 
-### Add the remote repo
+### (Re-)add the remote repo
 
 ```sh
 git remote add origin ghblit:blitterated/some-repo.git
