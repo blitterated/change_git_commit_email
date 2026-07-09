@@ -265,6 +265,16 @@ git remote add origin git@ghblit:blitterated/tarmux.git
 end
 
 
+def inspect_cli_option_immutability
+  AllCLIOptions::each do |key, opt|
+    desc = opt.description
+    desc.replace("#{key.to_s}: fart")
+  end
+
+  AllCLIOptions::each { |key, opt| puts opt.description }; puts
+end
+
+
 def debug_dump
   puts "script name: #{File.basename(__FILE__)}"; puts
 
@@ -285,15 +295,7 @@ def debug_dump
   arg_options = FixAuthorCLI.new.parse ARGV
   p arg_options
 
-=begin
-  # Test CLIOption immutability
-  AllCLIOptions::each do |key, opt|
-    desc = opt.description
-    desc.replace("#{key.to_s}: fart")
-  end
-
-  AllCLIOptions::each { |key, opt| puts opt.description }; puts
-=end
+  #inspect_cli_option_immutability
 end
 
 
