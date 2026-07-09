@@ -202,11 +202,15 @@ class FixAuthorCLI
   end
 
   def get_optparse_banner()
-  "
-Fix author name and email in a git repo.
+    elevator_pitch = "Fix author name and email in a git repo."
+    usage_header   = "Usage: #{File.basename($PROGRAM_NAME)} [options]"
 
-Usage: #{File.basename($PROGRAM_NAME)} [options]
-"
+    "\n#{elevator_pitch}\n\n#{usage_header}\n"
+#   "
+# Fix author name and email in a git repo.
+#
+# Usage: #{File.basename($PROGRAM_NAME)} [options]
+# "
   end
 end
 
