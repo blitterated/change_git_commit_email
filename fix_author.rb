@@ -300,6 +300,8 @@ def debug_dump
   p arg_options
 
   #inspect_cli_option_immutability
+
+  nil # Let's not dump any confusing info to STDOUT.
 end
 
 
