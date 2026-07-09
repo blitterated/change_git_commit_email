@@ -104,23 +104,23 @@ git log --date=short --pretty=format:"%h%x09%an%x09%ad%x09%s"
 ```text
 91581f4 blitterated     2025-05-18      Added FROM comments to Dockerfile
 cf15700 blitterated     2023-12-06      factored out  lines
-d249140 Pete Young      2023-12-01      v2, v3 legacy, and v3 builds working
-433b591 Pete Young      2023-12-01      Clean build and run cribsheet
-3e945fc Pete Young      2023-12-01      Added compression description
-53db061 Pete Young      2023-11-30      Added info on compression differnces
-8414cf4 Pete Young      2023-11-15      v3 builds working. v2 mostly. Added README
-2f32730 Pete Young      2023-11-15      Removed execute flag from run and finish scripts
-5b73e3e Pete Young      2023-11-14      Refactored build scripts, added tests
-edbc1a0 Pete Young      2023-11-14      Config validation for v3 build
-366f4a6 Pete Young      2023-11-14      Using Heredocs in Dockerfile
-64cc383 Pete Young      2023-11-14      Split out common build functions to an include
-439b8b0 Pete Young      2023-11-14      Changed image name for v3 builds
-0fb1e8b Pete Young      2023-11-14      Renamed v3 s6-rc.d build script
-995ada2 Pete Young      2023-11-14      Added README.md
-4feb81a Pete Young      2023-11-14      Removed services.d from s6-rc.d build script
-6bd160e Pete Young      2023-11-14      Builds for s6-overlay v3 working
-b77f2fd Pete Young      2023-11-13      moved Dockerfile to root
-16b4ae9 Pete Young      2023-11-13      initial commit
+d249140 Mickey Blueyes  2023-12-01      v2, v3 legacy, and v3 builds working
+433b591 Mickey Blueyes  2023-12-01      Clean build and run cribsheet
+3e945fc Mickey Blueyes  2023-12-01      Added compression description
+53db061 Mickey Blueyes  2023-11-30      Added info on compression differnces
+8414cf4 Mickey Blueyes  2023-11-15      v3 builds working. v2 mostly. Added README
+2f32730 Mickey Blueyes  2023-11-15      Removed execute flag from run and finish scripts
+5b73e3e Mickey Blueyes  2023-11-14      Refactored build scripts, added tests
+edbc1a0 Mickey Blueyes  2023-11-14      Config validation for v3 build
+366f4a6 Mickey Blueyes  2023-11-14      Using Heredocs in Dockerfile
+64cc383 Mickey Blueyes  2023-11-14      Split out common build functions to an include
+439b8b0 Mickey Blueyes  2023-11-14      Changed image name for v3 builds
+0fb1e8b Mickey Blueyes  2023-11-14      Renamed v3 s6-rc.d build script
+995ada2 Mickey Blueyes  2023-11-14      Added README.md
+4feb81a Mickey Blueyes  2023-11-14      Removed services.d from s6-rc.d build script
+6bd160e Mickey Blueyes  2023-11-14      Builds for s6-overlay v3 working
+b77f2fd Mickey Blueyes  2023-11-13      moved Dockerfile to root
+16b4ae9 Mickey Blueyes  2023-11-13      initial commit
 ```
 
 
