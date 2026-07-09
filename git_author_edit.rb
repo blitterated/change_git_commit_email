@@ -309,6 +309,6 @@ debug_dump
 
 
 =begin
-ruby fix_author.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git"
-ruby fix_author.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git" --work-dir "~/foo/bar"
+ruby git_author_edit.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git"
+ruby git_author_edit.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git" --work-dir "~/foo/bar"
 =end
