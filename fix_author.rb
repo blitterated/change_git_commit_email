@@ -3,6 +3,8 @@ require 'optparse'
 
 DBUG = true
 
+DefaultWorkDir = "./work".freeze
+
 
 # String extension method for red terminal output, e.g. error messages.
 # Example:
@@ -169,7 +171,7 @@ end
 class FixAuthorCLI
   def initialize
     # Default option values
-    @options = {AllCLIOptions::work_dir.param_key => "."}
+    @options = {AllCLIOptions::work_dir.param_key => DefaultWorkDir}
   end
 
   private def create_parser
