@@ -171,7 +171,7 @@ end
 
 
 # Basically a wrapper class around OptionParser.
-class FixAuthorCLI
+class GitAuthorEditCLI
   def initialize
     # Default option values
     @options = {AllCLIOptions::work_dir.param_key => DefaultWorkDir}
@@ -215,7 +215,7 @@ class FixAuthorCLI
 end
 
 
-class AuthorEditor
+class GitAuthorEdit
 
   def initialize(old_name:, old_email:, new_name:, new_email:, repo_url:, work_dir:)
     @old_name  = old_name
@@ -296,7 +296,7 @@ def debug_dump
 
   AllCLIOptions::each { |opt| p opt; puts }
 
-  arg_options = FixAuthorCLI.new.parse ARGV
+  arg_options = GitAuthorEditCLI.new.parse ARGV
   p arg_options
 
   #inspect_cli_option_immutability
