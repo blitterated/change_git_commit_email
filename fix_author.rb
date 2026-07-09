@@ -215,7 +215,7 @@ class FixAuthorCLI
 end
 
 
-class AuthorFixer
+class AuthorEditor
 
   def initialize(old_name:, old_email:, new_name:, new_email:, repo_url:, work_dir:)
     @old_name  = old_name
