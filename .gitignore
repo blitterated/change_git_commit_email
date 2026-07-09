@@ -4,3 +4,6 @@
 # Ignore vim swap files
 *.swo
 *.swp
+
+# Ignore mailmap file
+mailmap
