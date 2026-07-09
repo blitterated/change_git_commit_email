@@ -130,7 +130,10 @@ class AllCLIOptions
     @proto_option_defs.clone.freeze
   end
 
-  # Initiolize the option definitions
+  # Initiolize the option definitions.
+  # They're used for:
+  # 1. Populating available options and switches in OptionParse.
+  # 2. Populating the help text for the --help option.
   @option_defs = @proto_option_defs.each.each_with_object({}) do |opt, defs|
     defs[opt[:symbol]] =
       CLIOption.new(
