@@ -3,7 +3,7 @@ require 'optparse'
 
 DBUG = true
 
-DefaultWorkDir = "./work".freeze
+DefaultWorkDir = "./gae_work_dir".freeze
 
 
 # String extension method for red terminal output, e.g. error messages.

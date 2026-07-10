@@ -7,3 +7,6 @@
 
 # Ignore mailmap file
 mailmap
+
+# Ignore default work directory
+gae_work_dir
