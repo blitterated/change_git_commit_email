@@ -1,7 +1,8 @@
+require 'fileutils'
 require 'open3'
 require 'optparse'
 
-DBUG = true
+LOGGING = true
 
 DefaultWorkDir = "./gae_work_dir".freeze
 
@@ -118,11 +119,6 @@ class AllCLIOptions
        short_name:  'w'.freeze,
        has_arg:     true,
        description: 'The working directory for the fix. Defaults to CWD.'.freeze},
-
-      {symbol:      :help,
-       short_name:  'h'.freeze,
-       has_arg:     false,
-       description: 'Shows this help text.'.freeze},
     ].freeze
 
   # Expose the proto option definitions for testing
@@ -142,13 +138,6 @@ class AllCLIOptions
         has_arg:     opt[:has_arg],
         description: opt[:description],
       )
-
-    puts "New option def:\n#{defs[opt[:symbol]].to_s}" if DBUG; puts if DBUG
-  end
-
-  if DBUG
-    puts "AllCLIOptions' option definitions"
-    p @option_defs
   end
 
   def self.get_def(opt_sym)
@@ -197,6 +186,10 @@ class GitAuthorEditConfig
     @work_dir  = work_dir.freeze
   end
 
+  def repo_name
+    @repo_url.split("/")[-1].gsub("\.git", "")
+  end
+
   def to_s
     [
       "GitAuthorEditConfig",
@@ -205,6 +198,7 @@ class GitAuthorEditConfig
       "  @new_name  = \"#{@new_name}\"",
       "  @new_email = \"#{@new_email}\"",
       "  @repo_url  = \"#{@repo_url}\"",
+      "  @repo_name = \"#{@repo_name}\"",
       "  @work_dir  = \"#{@work_dir}\"",
     ].join("\n")
   end
@@ -219,11 +213,9 @@ class GitAuthorEditCLI
   end
 
   private def create_parser
-    OptionParser.new do |opts|
-      opts.banner = get_optparse_banner
-
+    OptionParser.new do |parser|
       AllCLIOptions::each do |key, opt|
-        opts.on(opt.short_name, opt.long_name, opt.description)
+        parser.on(opt.short_name, opt.long_name, opt.description)
       end
     end
   end
@@ -254,60 +246,12 @@ class GitAuthorEditCLI
 
     map_option_vals_to_config
   end
-
-  def get_optparse_banner()
-    elevator_pitch = "Fix author name and email in a git repo."
-    usage_header   = "Usage: #{File.basename($PROGRAM_NAME)} [options]"
-
-    "\n#{elevator_pitch}\n\n#{usage_header}\n"
-#   "
-# Fix author name and email in a git repo.
-#
-# Usage: #{File.basename($PROGRAM_NAME)} [options]
-# "
-  end
 end
 
 
 class GitAuthorEdit
-
-  def initialize(old_name:, old_email:, new_name:, new_email:, repo_url:, work_dir:)
-    @old_name  = old_name
-    @old_email = old_email
-    @new_name  = new_name
-    @new_email = new_email
-    @repo_url  = repo_url
-    @work_dir  = work_dir
-  end
-
-  def run()
-    # match hidden dot folders by default
-    glob_opts = File::FNM_DOTMATCH
-
-    Dir.chdir(@work_dir) do
-
-=begin
-    # Shell command example of workflow.
-
-    git clone git@ghblit:blitterated/tarmux.git
-    cd tarmux
-    git filter-repo --force --mailmap ../mailmap
-    git push -u --force origin git@ghblit:blitterated/tarmux.git
-    git remote add origin git@ghblit:blitterated/tarmux.git
-=end
-    end
-  end
-
-  def tar_folders(folders)
-    folders.each do |f|
-      tar_cmd = %(tar -I 'gzip -9' cvf "#{@work_dir}/#{f}.tgz" "#{f}")
-
-      if block_given?
-        yield(tar_cmd)
-      else
-        run_shell_command(tar_cmd)
-      end
-    end
+  def initialize(config)
+    @config = config
   end
 
   def run_shell_command(shell_cmd)
@@ -317,11 +261,108 @@ class GitAuthorEdit
       stderr_thr = Thread.new { stderr.each {|line| puts line.red } }
 
       stdin.puts(shell_cmd)
+      stdin.close # <== EOF signal
 
       wait_thread.value
     end
+    nil
+  end
+
+  # Delete any existing work dir with the same name, and create a new one.
+  def ensure_fresh_work_dir
+    if Dir.exist? @config.work_dir
+      FileUtils.rm_rf @config.work_dir
+      puts "\nRemoved existing work dir: #{@config.work_dir}" if LOGGING
+    end
+
+    Dir.mkdir @config.work_dir
+    puts "\nCreated work dir: #{@config.work_dir}" if LOGGING
+  end
+
+  def check_ruby_version
+    puts "\nRuby version: #{RUBY_VERSION}" if LOGGING
+
+    ruby_major_version = RUBY_VERSION.split('.')[0]
+
+    if ruby_major_version.to_i < 4
+      puts "\nPlease ensure you're using a Ruby of version 4 or greater.".red
+      puts "\nCurrent Ruby version: #{RUBY_VERSION}".red
+      exit 1
+    end
+    nil
+  end
+
+  private def jump_into_dir(new_dir)
+    old_dir = Dir.getwd
+
+    Dir.chdir new_dir
+
+    puts "\nChange directory:\n  #{old_dir} => #{Dir.getwd}" if LOGGING
+    nil
+  end
+
+  def jump_into_work_dir
+    jump_into_dir @config.work_dir
+  end
+
+  def jump_into_repo_dir
+    jump_into_dir @config.repo_name
+  end
+
+  def generate_mailmap_file
+    # Example of mailmap file entry:
+    # Kermit the Frog <kermy@muppet.show> Elmo Muppet <elmo@tickle.me>
+
+    mm_filename = "mailmap"
+
+    # Generate a single formatted entry
+    mm_entry = "#{@config.new_name} <#{@config.new_email}> #{@config.old_name} <#{@config.old_email}>"
+
+    # Write out a new mailmap file in the current directory (should be work_dir)
+    File.open(mm_filename, "w") { |mm_file| mm_file.write mm_entry }
+    puts "\nmailmap file: #{Dir.getwd}/#{mm_filename}" if LOGGING
+
+    nil
+  end
+
+  def clone_the_repo
+    run_shell_command "git clone #{@config.repo_url}"
+    puts "\nCloned repo: #{@config.repo_url}" if LOGGING
+  end
+
+  def edit_author
+    run_shell_command "git filter-repo --force --mailmap ../mailmap"
+    puts "\nCommit authors edited" if LOGGING
+  end
+
+  def restore_remote
+    run_shell_command "git remote add origin #{@config.repo_url}"
+    puts "\nRemote restored: #{@config.repo_url}" if LOGGING
+  end
+
+  def generate_upstream_force_push_cmd
+    cur_git_branch = `git rev-parse --abbrev-ref HEAD`
+    "git push -u --force origin #{cur_git_branch}"
+  end
+
+  def run()
+    check_ruby_version
+    ensure_fresh_work_dir
+    jump_into_work_dir
+    generate_mailmap_file
+    clone_the_repo
+    jump_into_repo_dir
+    edit_author
+    restore_remote
+
+    puts; puts generate_upstream_force_push_cmd; puts
+
+    # Return to original directory?
   end
 end
+
+
+
 
 def inspect_cli_option_immutability
   AllCLIOptions::each do |key, opt|
@@ -332,18 +373,10 @@ def inspect_cli_option_immutability
   AllCLIOptions::each { |key, opt| puts opt.description }; puts
 end
 
-
 def debug_dump
   puts "script name: #{File.basename(__FILE__)}"; puts
 
   puts "Ruby version: #{`ruby -v`}"; puts
-
-  #repo_url = "git@ghblit:blitterated/tarmux.git"
-  repo_url = "git@ghblit:blitterated/tarmux.wiki.git"
-  puts "repo_url: #{repo_url}"; puts
-
-  repo_name = repo_url.split('/')[-1].delete_suffix(".git")
-  puts "repo_name: #{repo_name}"; puts
 
   proto_opts = AllCLIOptions::proto_option_defs
   puts "AllCLIOptions::proto_option_defs"
@@ -373,10 +406,20 @@ def debug_dump
 end
 
 
-debug_dump
+#debug_dump
+
+
+# Create a config from CLI options
+config = GitAuthorEditCLI.new.parse ARGV
+GitAuthorEdit.new(config).run
+
 
 
 =begin
 ruby git_author_edit.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git"
-ruby git_author_edit.rb --old-name "Ren Höek" --old-email "ren@nick.tv" --new-name "Stimpson J. Cat" --new-email "stimpy@nick.tv" --repo-url "git@github.com:stimpyj/spacemadness.git" --work-dir "~/foo/bar"
+ruby git_author_edit.rb --help
+
+
+ruby git_author_edit.rb --old-name "Pete Young" --old-email "pete@simpli.fi" --new-name "blitterated" --new-email "blitterated@protonmail.com" --repo-url "git@ghblit:blitterated/tarmux.git"
+
 =end
